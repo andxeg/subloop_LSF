@@ -1,5 +1,6 @@
 # pragma once
 
+
 class Task {
 public:
     Task(const unsigned int& taskId,
@@ -10,9 +11,26 @@ public:
 
     ~Task();
 
-    bool isTaskExecutable(const unsigned int& currentTime);
+    // Can tasl will be executed on time
+    bool isTaskWillBeOnTime(const unsigned int& currentTime);
+
+    // Can do task be executed now.
+    // Check one execution on period.
+    // Check that current time in directive interval
     bool isTaskReady(const unsigned int& currentTime);
+
+
     bool isTaskPassed(const unsigned int& currentTime);
+
+    unsigned int getTaskId();
+    unsigned int getDuration();
+    unsigned int getPeriod();
+    unsigned int getLeftBorder();
+    unsigned int getRightBorder();
+    unsigned int getLastExecutionTime();
+
+    void setLastExecutionTime(const unsigned int& lastExecutionTime );
+    
 private:
     unsigned int taskId_;
     unsigned int duration_;

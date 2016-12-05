@@ -1,9 +1,15 @@
 #include <string>
 #include <iostream>
 
-#include "../include/Defs.h"
-#include "../include/TaskReader.h"
-#include "../include/Algorithm.h"
+#include "Defs.h"
+#include "TaskReader.h"
+#include "Algorithm.h"
+
+
+unsigned int readSubCircleTime(const char* str) {
+    unsigned int subCircleTime;
+    return subCircleTime;
+}
 
 
 inline double getReservePrecision() {
@@ -54,6 +60,42 @@ unsigned int findMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
     return -1;
 }
 
+
+
+//===============
+
+bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
+                                                   Algorithm& algorithm)
+{
+    Schedule schedule;
+
+    double reserve=1.0-getReservePrecision();
+    unsigned int maxTasksInSubCircle = taskContainer->getMaxTasksInSubCircle();
+
+    for (;reserve>=0.0; reserve-=getReservePrecision()) {
+        algorithm.setReserve(reserve);
+        
+        //optimize min and max TasksCountInSubCircle
+        unsigned int minTasksInSubCircle = 1;
+        for (;minTasksInSubCircle<=maxTasksInSubCircle; minTasksInSubCircle++) {
+            algorithm.setMaxTasksInSubCircle(minTasksInSubCircle);
+            schedule = algorithm.schedule(taskContainer);
+            if (!schedule.empty()) {
+                std::cout << "Reserve-> " << reserve <<
+                    "; Min tasks in subcircle-> " << 
+                    minTasksInSubCircle << 
+                    std::endl;
+                // print Schedule
+                //
+                return true;
+            }
+        }
+        
+    }
+
+    return false;
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 3) {
 
@@ -68,32 +110,21 @@ int main(int argc, char* argv[]) {
     unsigned int subCircleTime = readSubCircleTime(argv[2]);
 
     TaskReader taskReader(inputFile);
-    taskReader.readTasks();
+
+    if (!taskReader.readTasks())
+        return 1;
+
     TaskContainer* taskContainer = taskReader.getTaskContainer();
     unsigned int runTime = taskContainer->getRunTime();
 
     Algorithm algorithm;
+
+    // Set basic parameters
+    algorithm.setRunTime(runTime);
     algorithm.setSubCircleTime(subCircleTime);
-
-    double maxReserve = findMaxReserveInSubCircle(taskContainer, algorithm);
-    if (maxReserve < 0.0) {
-        std::cout << "Can not max reserve for tasks" << std::endl;
+    
+    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) 
         return 1;
-    }
-
-    std::cout <<  "MaxReserve -> " <<
-            maxReserve <<
-            std::endl;
-
-    int minTasksInSubCircle = findMinTasksThresholdInSubCircle(taskContainer, maxReserve, algorithm);
-    if (minTasksInSubCircle < 0) {
-        std::cout << "Can not find mininal count of tasks in sub circle" << std::endl;
-        return 1;
-    }
-
-    std::cout << " Minimal tasks in sub circle" <<
-            minTasksInSubCircle <<
-            std::endl;
-
+    
     return 0;
 }

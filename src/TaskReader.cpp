@@ -1,20 +1,21 @@
-#include "../include/TaskReader.h"
+#include "TaskReader.h"
 
 #include <fstream>
 #include <sstream>
 #include "Task.h"
 
+
 TaskReader::TaskReader(std::string inputFileName) {
-    inputFileName = inputFileName;
+    inputFileName_ = inputFileName;
     taskContainer_ = new TaskContainer();
 }
 
 
 TaskReader::~TaskReader() {
-    delete taskContainer;
+    delete taskContainer_;
 }
 
-void TaskReader::readTasks() {
+bool TaskReader::readTasks() {
     ofstream inputFile;
     inputFile.open(inputFileName_, ios::in);
 
@@ -22,7 +23,7 @@ void TaskReader::readTasks() {
         std::cout << "Error while opening file: " <<
                 inputFileName_ <<
                 std::endl;
-        return;
+        return false;
     }
 
     Tasks tasks;
@@ -45,8 +46,15 @@ void TaskReader::readTasks() {
         {
             std::cout << "Error while reading input file" << std::endl;
             inputFile.close();
-            return;
+            return false;
         }
+
+        std::cout << taskId << " " <<
+                transData << " " <<
+                frequency << " " <<
+                leftBorder << " " <<
+                rightBorder << " " <<
+                std::endl;
 
         Task* task = new Task(taskId, transData, frequency,
                               leftBorder, rightBorder);
@@ -54,6 +62,7 @@ void TaskReader::readTasks() {
     }
 
     taskContainer_.setTasks(tasks);
+    return true;
 
 }
 

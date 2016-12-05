@@ -1,16 +1,22 @@
-all : static_sheduler clean
+all : sheduler clean
 
-static_sheduler: main.o snapshot.o algorithm.o tinyxml2.o
-	g++ ./main.o ./snapshot.o ./algorithm.o -o ./prog_02160560_521
+sheduler: main.o snapshot.o algorithm.o
+	g++ ./Main.o ./TaskReader.o ./Algorithm.o ./Task.o ./TaskContainer.o -o ./prog_02160560_521
 	
-main.o: ./src/main.cpp
-	g++ -O2 -g -Wall -std=c++0x -c ./src/main.cpp -I ./include -I
+Main.o: ./src/Main.cpp
+	g++ -O2 -g -Wall -std=c++0x -c ./src/Main.cpp -I ./include -I
 
-snapshot.o: ./src/snapshot.cpp
-	g++ -O2 -g -Wall -std=c++0x -c ./src/snapshot.cpp -I ./include -I
+TaskReader.o: ./src/TaskReader.cpp
+	g++ -O2 -g -Wall -std=c++0x -c ./src/TaskReader.cpp -I ./include -I
 	
-algorithm.o: ./src/algorithm.cpp
-	g++ -O2 -g -Wall -std=c++0x -c ./src/algorithm.cpp -I ./include -I
+Algorithm.o: ./src/Algorithm.cpp
+	g++ -O2 -g -Wall -std=c++0x -c ./src/Algorithm.cpp -I ./include -I
+
+Task.o: ./src/Task.cpp
+	g++ -O2 -g -Wall -std=c++0x -c ./src/Task.cpp -I ./include -I
+
+TaskContainer.o: ./src/TaskContainer.cpp
+	g++ -O2 -g -Wall -std=c++0x -c ./src/TaskContainer.cpp -I ./include -I
 	
 clean:
-	rm ./main.o ./snapshot.o ./algorithm.o
+	rm ./Main.o ./TaskReader.o ./Algorithm.o ./Task.o ./TaskContainer.o
