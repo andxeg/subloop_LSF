@@ -24,7 +24,7 @@ Task::Task(const unsigned int& taskId,
 Task::~Task() {}
 
 
-bool Task::isTaskWillBeOnTime(const unsigned int& currentTime) {
+bool Task::isWillBeOnTime(const unsigned int& currentTime) {
     bool result = true;
 
     if ((currentTime+duration_) > ((currentTime/period_)*period_ + rightBorder_))
@@ -34,7 +34,7 @@ bool Task::isTaskWillBeOnTime(const unsigned int& currentTime) {
 }
 
 
-bool Task::isTaskReady(const unsigned int& currentTime) {
+bool Task::isReady(const unsigned int& currentTime) {
     bool result = false;
     unsigned int currPeriod = (currentTime/period_)*period_;
 
@@ -52,7 +52,7 @@ bool Task::isTaskReady(const unsigned int& currentTime) {
 }
 
 
-bool Task::isTaskPassed(const unsigned int& currentTime) {
+bool Task::isPassed(const unsigned int& currentTime) {
     bool result = false;
 
     unsigned int lastEndOfDirectiveInterval = (lastExecutionTime_/period_)*period_ +
@@ -65,8 +65,38 @@ bool Task::isTaskPassed(const unsigned int& currentTime) {
 }
 
 
+bool Task::isExecutedInCurrentPeriod(const unsigned int& currentTime) {
+    bool result;
+    unsigned int startOfPeriod = (currentTime/period_)*period_;
+    if (lastExecutionTime_ <= startOfPeriod)
+        result = false;
+    else
+        result = true;
 
-unsigned int Task::getTaskId() {
+    return result;
+
+}
+
+// two variant when task finish
+// when last exec in current period and period don't finished
+// when period just finished and last exec <= this time
+bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
+    bool result;
+    unsigned int startOfPeriod = (currentTime/period_)*period_;
+    if (lastExecutionTime_ > startOfPeriod)
+        result = true;
+    else if (startOfPeriod == currentTime &&
+            lastExecutionTime_ <= startOfPeriod &&
+            lastExecutionTime_ > (startOfPeriod - period_ ))
+        result = true;
+    else
+        result = false;
+
+    return result;
+}
+
+
+unsigned int Task::getId() {
     return taskId_;
 }
 

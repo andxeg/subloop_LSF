@@ -11,18 +11,24 @@ public:
 
     ~Task();
 
-    // Can tasl will be executed on time
-    bool isTaskWillBeOnTime(const unsigned int& currentTime);
+    // Can task will be executed on time
+    bool isWillBeOnTime(const unsigned int& currentTime);
 
     // Can do task be executed now.
     // Check one execution on period.
     // Check that current time in directive interval
-    bool isTaskReady(const unsigned int& currentTime);
+    bool isReady(const unsigned int& currentTime);
 
+    // passed forever
+    bool isPassed(const unsigned int& currentTime);
 
-    bool isTaskPassed(const unsigned int& currentTime);
+    // only mean that task executed or not executed in current period
+    bool isExecutedInCurrentPeriod(const unsigned int& currentTime);
 
-    unsigned int getTaskId();
+    // current time is either in the middle of period or at the end of period
+    bool isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime);
+
+    unsigned int getId();
     unsigned int getDuration();
     unsigned int getPeriod();
     unsigned int getLeftBorder();
@@ -37,5 +43,6 @@ private:
     unsigned int period_;
     unsigned int leftBorder_, rightBorder_;
 
+    // end of last execution time
     unsigned int lastExecutionTime_;
 };

@@ -91,7 +91,7 @@ unsigned long long TaskContainer::gcd(const unsigned long long& first,
 void TaskContainer::printTasks() {
     for (Tasks::iterator it=tasks_.begin(); it != tasks_.end(); it++) {
         Task* task = *it;
-        std::cout <<  task->getTaskId() << " " <<
+        std::cout <<  task->getId() << " " <<
                 task->getDuration()<< " " <<
                 task->getPeriod() << " " <<
                 task->getLeftBorder() << " " <<
