@@ -10,7 +10,7 @@ public:
     TaskContainer();
     ~TaskContainer();
 
-    unsigned int getRunTime();
+    unsigned long long getRunTime();
     unsigned int getMaxTasksInSubCircle();
 
     void setTasks(Tasks& tasks);
@@ -19,11 +19,11 @@ public:
     void printTasks();
 
 private:
-    static unsigned int lcm(const unsigned int& first,
-    						const unsigned int& second);
+    static unsigned long long lcm(const unsigned long long& first,
+								  const unsigned long long& second);
 
-    static unsigned int gcd(const unsigned int& first,
-    						const unsigned int& second);
+    static unsigned long long gcd(const unsigned long long& first,
+								  const unsigned long long & second);
 private:
     Tasks tasks_;
 };

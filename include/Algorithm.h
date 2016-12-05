@@ -8,6 +8,8 @@ public:
     Algorithm();
     ~Algorithm();
 
+    void printParameters();
+
     void setReserve(const double& reserve);
     void setMaxTasksInSubCircle(const unsigned& maxTasksInSubCircle);
 

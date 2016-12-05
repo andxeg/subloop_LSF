@@ -16,8 +16,8 @@ TaskReader::~TaskReader() {
 }
 
 bool TaskReader::readTasks() {
-    ofstream inputFile;
-    inputFile.open(inputFileName_, ios::in);
+    std::fstream inputFile;
+    inputFile.open(inputFileName_, std::ios::in);
 
     if (!inputFile.is_open()) {
         std::cout << "Error while opening file: " <<
@@ -28,10 +28,10 @@ bool TaskReader::readTasks() {
 
     Tasks tasks;
     std::string line;
-    while (std::getline(inpuFile, line)) {
+    while (std::getline(inputFile, line)) {
 
         std::istringstream str(line);
-        if (str[0] == '#')
+        if (str.peek() == '#')
             continue;
 
         unsigned int taskId, transData;
@@ -61,13 +61,13 @@ bool TaskReader::readTasks() {
         tasks.push_back(task);
     }
 
-    taskContainer_.setTasks(tasks);
+    taskContainer_->setTasks(tasks);
     return true;
 
 }
 
 
-TaskReader::TaskContainer* getTaskContainer() {
+TaskContainer* TaskReader::getTaskContainer() {
     return taskContainer_;
 }
 

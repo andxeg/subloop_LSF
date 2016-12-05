@@ -7,7 +7,8 @@
 
 
 unsigned int readSubCircleTime(const char* str) {
-    unsigned int subCircleTime;
+    std::string subCircleTimeStr(str);
+    unsigned int subCircleTime = std::stoi(subCircleTimeStr);
     return subCircleTime;
 }
 
@@ -99,7 +100,8 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
 int main(int argc, char* argv[]) {
     if (argc != 3) {
 
-        std::cout << "[Error] Please Enter: " <<
+        std::cout <<
+                "[Error] Please Enter: " <<
                 argv[0] <<
                 " <input_file.txt> <subcircle_length>" <<
                 std::endl;
@@ -122,7 +124,16 @@ int main(int argc, char* argv[]) {
     // Set basic parameters
     algorithm.setRunTime(runTime);
     algorithm.setSubCircleTime(subCircleTime);
-    
+
+
+    algorithm.printParameters();
+
+    std::cout << "Tasks in TaskContainer"<< std::endl;
+    taskContainer->printTasks();
+
+
+    return 0;
+
     if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) 
         return 1;
     

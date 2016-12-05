@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include "Defs.h"
+#include "TaskContainer.h"
 
 
 class TaskReader {
@@ -10,7 +11,7 @@ public:
     TaskReader(std::string inputFileName);
     ~TaskReader();
 
-    void readTasks();
+    bool readTasks();
 
     TaskContainer* getTaskContainer();
 

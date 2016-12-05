@@ -13,15 +13,15 @@ TaskContainer::~TaskContainer() {
 }
 
 
-unsigned int TaskContainer::getRunTime() {
+unsigned long long TaskContainer::getRunTime() {
     // find schedule interval as lcm of the tasks period
 	unsigned int taskCount = tasks_.size();
     
     if (taskCount == 0)
     	return 0;
 
-    unsigned int globalLcm = 1;
-    for (unsgined int i=0; i<taskCount; i++) {
+    unsigned long long globalLcm = 1;
+    for (unsigned int i=0; i<taskCount; i++) {
         globalLcm = lcm(globalLcm, tasks_[i]->getPeriod());
     }
 
@@ -32,14 +32,13 @@ unsigned int TaskContainer::getRunTime() {
 unsigned int TaskContainer::getMaxTasksInSubCircle() {
     // find min task duration -> min_d
     // getMaxTasksInSubCircle == schedule interval / min_d
-    if (task_.empty())
+    if (tasks_.empty())
     	return 0;
 
-    unsigned int minDuration = task_[0].getDuration();
+    unsigned int minDuration = tasks_[0]->getDuration();
 
-    
-    for (Task::iterator it=++task_.begin(); it!=task_.end(); it++) {
-    	unsigned int duration = it->getDuration();
+    for (Tasks::iterator it=++tasks_.begin(); it!=tasks_.end(); it++) {
+    	unsigned int duration = (*it)->getDuration();
     	if (duration < minDuration)
     		minDuration = duration;
     }
@@ -59,15 +58,15 @@ Tasks TaskContainer::getTasks() {
 }
 
 
-unsigned int TaskContainer::lcm(const unsigned int& first,
-    							const unsigned int& second)
+unsigned long long TaskContainer::lcm(const unsigned long long& first,
+                                 const unsigned long long& second)
 {
 	return first*second/gcd(first, second);
 }
 
 
-unsigned int TaskContainer::gcd(const unsigned int& first,
-                                const unsigned int& second)
+unsigned long long TaskContainer::gcd(const unsigned long long& first,
+                                      const unsigned long long& second)
 {
     unsigned int a = first;
     unsigned int b = second;
@@ -91,7 +90,7 @@ unsigned int TaskContainer::gcd(const unsigned int& first,
 
 void TaskContainer::printTasks() {
     for (Tasks::iterator it=tasks_.begin(); it != tasks_.end(); it++) {
-        Tasks* task = *it;
+        Task* task = *it;
         std::cout <<  task->getTaskId() << " " <<
                 task->getDuration()<< " " <<
                 task->getPeriod() << " " <<
