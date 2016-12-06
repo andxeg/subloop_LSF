@@ -1,6 +1,9 @@
 #include "Task.h"
 
 
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
+
 unsigned int getWordTransmissionTime() {
     return 20;
 }
@@ -24,10 +27,15 @@ Task::Task(const unsigned int& taskId,
 Task::~Task() {}
 
 
-bool Task::isWillBeOnTime(const unsigned int& currentTime) {
+bool Task::isWillBeOnTime(const unsigned int& currentTime) { // !!!!!!!!!!!!!
     bool result = true;
+    unsigned int currPeriod = (currentTime/period_)*period_;
 
-    if ((currentTime+duration_) > ((currentTime/period_)*period_ + rightBorder_))
+    // Task has already been executed
+    if (lastExecutionTime_  > currPeriod)
+        return true;
+
+    if ((currentTime+duration_) > (currPeriod + rightBorder_))
         result = false;
 
     return result;
@@ -39,8 +47,8 @@ bool Task::isReady(const unsigned int& currentTime) {
     unsigned int currPeriod = (currentTime/period_)*period_;
 
     // Check on one execution in period
-    if (  lastExecutionTime_ >=  (currPeriod + leftBorder_)  &&
-            lastExecutionTime_ < (currPeriod + rightBorder_) )
+    if (  lastExecutionTime_ >  (currPeriod + leftBorder_)  &&
+            lastExecutionTime_ <= (currPeriod + rightBorder_) )
         return false;
 
     // Check availability of execution
@@ -90,7 +98,7 @@ bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
         result = true;
     else if (startOfPeriod == currentTime &&
             lastExecutionTime_ <= startOfPeriod &&
-            lastExecutionTime_ > (startOfPeriod - period_ ))
+            lastExecutionTime_ > (startOfPeriod - period_ + leftBorder_))
         result = true;
     else
         result = false;
@@ -99,8 +107,18 @@ bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
 }
 
 
-unsigned int Task::getStock() {
-    return (rightBorder_ - leftBorder_) - duration_;
+unsigned int Task::getStock(const unsigned int& currentTime) { // !!!!!!!!!!!!!
+    // phi2 - phi1* - duration
+    // phi1* = max(phi1, currentTime)
+
+    unsigned int currentPeriod = (currentTime/period_)*period_;
+    unsigned int endOfInterval = currentPeriod+rightBorder_;
+
+    if (currentTime >= endOfInterval)
+        return 0;
+
+
+    return (endOfInterval - MAX(currentTime, leftBorder_)) - duration_;
 }
 
 

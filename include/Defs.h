@@ -9,5 +9,3 @@
 typedef std::vector<Task*> Tasks;
 
 typedef std::vector< std::pair < unsigned int, Tasks>> Schedule;
-
-

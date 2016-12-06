@@ -1,5 +1,7 @@
 #include "TaskContainer.h"
 
+#include <algorithm>
+
 
 TaskContainer::TaskContainer() {
     tasks_ = Tasks();
@@ -37,8 +39,8 @@ unsigned int TaskContainer::getMaxTasksInSubCircle() {
 
     unsigned int minDuration = tasks_[0]->getDuration();
 
-    for (Tasks::iterator it=++tasks_.begin(); it!=tasks_.end(); it++) {
-    	unsigned int duration = (*it)->getDuration();
+    for (unsigned int i=1; i < tasks_.size(); i++) {
+    	unsigned int duration = tasks_[i]->getDuration();
     	if (duration < minDuration)
     		minDuration = duration;
     }
@@ -48,8 +50,15 @@ unsigned int TaskContainer::getMaxTasksInSubCircle() {
 }
 
 
+bool TaskContainer::taskCompare(Task* first, Task* second) {
+    return first->getDuration() < second->getDuration();
+}
+
+
 void TaskContainer::setTasks(Tasks& tasks) {
     tasks_ = tasks;
+    std::sort(tasks_.begin(), tasks_.end(), TaskContainer::taskCompare);
+
 }
 
 
@@ -98,4 +107,36 @@ void TaskContainer::printTasks() {
                 task->getRightBorder() <<
                 std::endl;
     }
+}
+
+
+
+unsigned int TaskContainer::getMaxTresholdTasksInSubCircle(const unsigned int& subCircleTime,
+                                                           double& reserve)
+{
+    unsigned int realSubCircleTime = subCircleTime*(1-reserve);
+    unsigned int currentSubCircleTime = 0;
+    unsigned maxCountInSubCircle = 0;
+
+    for (unsigned int i=0; i<tasks_.size(); i++) {
+        currentSubCircleTime += tasks_[i]->getDuration();
+        maxCountInSubCircle += 1;
+        if (currentSubCircleTime >= realSubCircleTime)
+            break;
+    }
+
+    return maxCountInSubCircle;
+}
+
+
+unsigned int TaskContainer::getMinTresholdTasksInSubCircle(const unsigned int& subCircleTime) {
+    unsigned int runTime = getRunTime();
+    unsigned int chainMaxCount = runTime/ subCircleTime + 1;
+    unsigned allTasksCount = 0;
+
+    for (unsigned int i=0; i<tasks_.size(); i++) {
+        allTasksCount += ((runTime/tasks_[i]->getPeriod()) + 1);
+    }
+
+    return allTasksCount/chainMaxCount + 1;
 }

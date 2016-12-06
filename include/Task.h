@@ -29,7 +29,7 @@ public:
     bool isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime);
 
 
-    unsigned int getStock();
+    unsigned int getStock(const unsigned int& currentTime);
     unsigned int getDirectiveIntervalDuration();
 
     unsigned int getId();

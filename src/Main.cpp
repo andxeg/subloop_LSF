@@ -20,6 +20,32 @@ inline double getReservePrecision() {
     return 0.01;
 }
 
+
+void printSchedule(Schedule& schedule) {
+    std::cout << "SCHEDULE:" << std::endl;
+
+    if (schedule.empty()) {
+        std::cout << "Schedule is empty" << std::endl;
+        return;
+    }
+
+//    std::cout <<  "Schedule.size() -> " << schedule.size() << std::endl;
+
+    for (unsigned int i=0; i<schedule.size(); i++) {
+        unsigned int chainStart = std::get<0>(schedule[i]);
+//        std::cout << "Chain start -> " << chainStart << std::endl;
+        Tasks chain = std::get<1>(schedule[i]);
+//        std::cout << "Chain was read. Chain size-> " << chain.size() << std::endl;
+        std::cout << chainStart << ' ';
+
+        for (unsigned int j=0; j<chain.size(); j++) {
+            std::cout << chain[j]->getId() << ' ';
+        }
+        std::cout << std::endl;
+    }
+}
+
+
 double findMaxReserveInSubCircle(TaskContainer* taskContainer,
                                  Algorithm& algorithm)
 {
@@ -76,21 +102,48 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
     double reserve=1.0-getReservePrecision();
     unsigned int maxTasksInSubCircle = taskContainer->getMaxTasksInSubCircle();
 
+    //
+//    reserve = 0.35;
+//    maxTasksInSubCircle = 20;
+    //
+
+
+    //
+//    reserve = 0.27;
+//    std::cout << "maxTasksInSubCircle -> " << maxTasksInSubCircle << std::endl;
+//    std::cout << "getMaxTresholdTasksInSubCircle -> " <<
+//            taskContainer->getMaxTresholdTasksInSubCircle(algorithm.getSubCircleTime(), reserve) << std::endl;
+//
+//    std::cout << "getMinTresholdTasksInSubCircle -> " <<
+//            taskContainer->getMinTresholdTasksInSubCircle(algorithm.getSubCircleTime()) << std::endl;
+    //
+
+    unsigned int minThreshold = taskContainer->getMinTresholdTasksInSubCircle(algorithm.getSubCircleTime());
+
     for (;reserve>=0.0; reserve-=getReservePrecision()) {
         algorithm.setReserve(reserve);
-        
-        //optimize min and max TasksCountInSubCircle
-        unsigned int minTasksInSubCircle = 1;
+        unsigned int minTasksInSubCircle = minThreshold;
+        maxTasksInSubCircle = taskContainer->getMaxTresholdTasksInSubCircle(algorithm.getSubCircleTime(), reserve);
+        std::cout << "minTasksInSubCircle -> " <<
+                minTasksInSubCircle << ' ' <<
+                "maxTasksInSubCircle -> " <<
+                maxTasksInSubCircle <<
+                std::endl;
+
         for (;minTasksInSubCircle<=maxTasksInSubCircle; minTasksInSubCircle++) {
+//            std::cout << reserve << ' ' << minTasksInSubCircle << std::endl;
+
             algorithm.setMaxTasksInSubCircle(minTasksInSubCircle);
             schedule = algorithm.schedule(taskContainer);
             if (!schedule.empty()) {
+                std::cout << "SCHEDULE WAS FOUND" << std::endl;
                 std::cout << "Reserve-> " << reserve <<
                     "; Min tasks in subcircle-> " << 
                     minTasksInSubCircle << 
                     std::endl;
+
                 // print Schedule
-                //
+                printSchedule(schedule);
                 return true;
             }
         }
@@ -98,21 +151,6 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
     }
 
     return false;
-}
-
-
-void printSchedule(Schedule schedule) {
-    std::cout << "SCHEDULE:" << std::endl;
-    for (unsigned int i=0; i<schedule.size(); i++) {
-        unsigned int chainStart = std::get<0>(schedule[i]);
-        Tasks chain = std::get<1>(schedule[i]);
-        std::cout << chainStart << ' ';
-
-        for (unsigned int j=0; i<chain.size(); j++) {
-            std::cout << chain[j]->getId() << ' ';
-        }
-        std::cout << std::endl;
-    }
 }
 
 
@@ -183,19 +221,21 @@ int main(int argc, char* argv[]) {
 //    std::cout << "Tasks in TaskContainer"<< std::endl;
 //    taskContainer->printTasks();
 
+
 //
     if (!testAlgorithm(taskContainer, algorithm)) {
         std::cout << "Schedule was not created" << std::endl;
         return 1;
     }
-//
-//
-//    return 0;
 
-//    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) {
-//        std::cout << "Schedule was not created" << std::endl;
-//        return 1;
-//    }
+
+    return 0;
+
+    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) {
+        std::cout << "Schedule was not created" << std::endl;
+        return 1;
+    }
+
 
     return 0;
 }
