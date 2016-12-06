@@ -25,6 +25,8 @@ private:
     bool existImpossibleTasks(Tasks tasks, unsigned int currentTime);
 
     Tasks getReadyTasks(Tasks tasks, unsigned int currentTime);
+    Tasks getTasksCanFinishedWithReserveLimitation(Tasks tasks, unsigned int chainDuration);
+    Task* getTaskByLsfCriteria(Tasks tasks);
 
 private:
     double reserve_;

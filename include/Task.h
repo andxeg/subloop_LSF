@@ -28,6 +28,10 @@ public:
     // current time is either in the middle of period or at the end of period
     bool isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime);
 
+
+    unsigned int getStock();
+    unsigned int getDirectiveIntervalDuration();
+
     unsigned int getId();
     unsigned int getDuration();
     unsigned int getPeriod();

@@ -78,8 +78,11 @@ bool Task::isExecutedInCurrentPeriod(const unsigned int& currentTime) {
 }
 
 // two variant when task finish
-// when last exec in current period and period don't finished
+// when last exec in current period and period didn't finished
 // when period just finished and last exec <= this time
+
+// return false when last exec was in previous period
+// current period didn't finished and > startOfPeriod
 bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
     bool result;
     unsigned int startOfPeriod = (currentTime/period_)*period_;
@@ -93,6 +96,16 @@ bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
         result = false;
 
     return result;
+}
+
+
+unsigned int getStock() {
+    return (rightBorder_ - leftBorder_) - duration_;
+}
+
+
+unsigned int Task::getDirectiveIntervalDuration() {
+    return rightBorder_ - leftBorder_;
 }
 
 
