@@ -23,6 +23,7 @@ private:
     bool checkAllTasksExecutedInCurrentPeriod(Tasks tasks, unsigned int currentTime);
     bool checkAllTasksFinishedToCurrentTimeInPeriod(Tasks tasks, unsigned int currentTime);
     bool existImpossibleTasks(Tasks tasks, unsigned int currentTime);
+    bool existNotFinishedBeforeRunTime(Tasks readyTasks, unsigned int currentTime);
 
     Tasks getReadyTasks(Tasks tasks, unsigned int currentTime);
     Tasks getTasksCanFinishedWithReserveLimitation(Tasks tasks, unsigned int chainDuration);

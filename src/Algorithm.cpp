@@ -129,7 +129,7 @@ Task* Algorithm::getTaskByLsfCriteria(Tasks tasks) {
 }
 
 
-bool Algorithm::existNotFinishedBeforeRunTime(Tasks readyTasks,
+bool Algorithm::existNotFinishedBeforeRunTime(Tasks tasks,
                                              unsigned int currentTime)
 {
     bool result = false;
@@ -144,13 +144,17 @@ bool Algorithm::existNotFinishedBeforeRunTime(Tasks readyTasks,
 }
 
 
-typedef std::vector<Task*> Tasks;
-
-typedef std::vector< std::pair < unsigned int, Tasks>> Schedule;
+//typedef std::vector<Task*> Tasks;
+//
+//typedef std::vector< std::pair < unsigned int, Tasks>> Schedule;
 
 
 Schedule Algorithm::schedule(TaskContainer* taskContainer) {
-    bool result = true;
+
+    // std::cout << "Start algo" << std::endl;
+
+
+//    bool result = true;
     Schedule finalSchedule;
     Tasks tasks = taskContainer->getTasks();
     unsigned int currentTime = 0; // (1)
@@ -169,35 +173,40 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
         }
 
         chainStart = currentTime;
+        // NOW we at the START of the CHAIN
 
         while (true) {
 
             //(4) Check if schedule interval is exhausted.
             if (currentTime >= runTime_) {
-                if (existPassedTasks(tasks, runTime_))
-                    result = false; // return finalSchedule.clear();
+                if (existPassedTasks(tasks, runTime_)) {
+                    finalSchedule.clear();
+                    return finalSchedule;
+                }
                 else {
                     if (checkAllTasksFinishedToCurrentTimeInPeriod(tasks, runTime_))
-                        result = true; // return finalSchedule;
-                    else
-                        result = false; // return finalSchedule.clear();
+                        return finalSchedule;
+                    else {
+                        finalSchedule.clear();
+                        return finalSchedule;
+                    }
                 }
-                break;
             }
 
 
             // Time is not exhausted.
             //(4.5) Check if tasks is passed after shift.
+            // in shift time may be tasks must have been executed but wasn't executed
             if (existPassedTasks(tasks, currentTime)) {
-                result = false; // return finalSchedule.clear();
-                break;
+                finalSchedule.clear();
+                return finalSchedule;
             }
 
             //(5,6,7) All task could be potential executed on time
             // Check it!
             if (existImpossibleTasks(tasks, currentTime)) {
-                result = false; // return finalSchedule.clear();
-                break;
+                finalSchedule.clear();
+                return finalSchedule;
             }
 
 
@@ -207,11 +216,11 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             Tasks readyTasks = getReadyTasks(tasks, currentTime);
             if (readyTasks.empty()) {
                 if (!chain.empty()) {
-                    schedule.push_back(std::make_pair(chainStart,
+                    finalSchedule.push_back(std::make_pair(chainStart,
                                                       chain));
-                    // goto 2
+                    break;// goto 2 -> form new chain
                 } else {
-                    // goto 3
+                    break;// goto 3 -> form new chain
                 }
             }
 
@@ -220,8 +229,8 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             // finished before runTime_ will be exhausted
             bool flag = existNotFinishedBeforeRunTime(readyTasks, currentTime);
             if (flag) {
-                result = false; // return finalSchedule.clear();
-                break;
+                finalSchedule.clear();
+                return finalSchedule;
             }
 
 
@@ -232,12 +241,12 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
 
             if (tasksCanFinishedWithReserveLimitation.empty()) {
                 if (chain.empty()) {
-                    result = false; // return finalSchedule.clear();
-                    break;
+                    finalSchedule.clear();
+                    return finalSchedule;
                 } else {
-                    schedule.push_back(std::make_pair(chainStart,
+                    finalSchedule.push_back(std::make_pair(chainStart,
                                                       chain));
-                    //goto 2
+                    break;//goto 2 -> form new chain
                 }
             }
 
@@ -255,32 +264,28 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             currentTime += task->getDuration();
 
             // (9.d) in current period task was executed
+            // set end of last execution
             task->setLastExecutionTime(currentTime);
 
             // Check if task passed when current task was processing
             if (existPassedTasks(tasks, currentTime)) {
-                result = false; // return finalSchedule.clear();
-                break;
+                finalSchedule.clear();
+                return finalSchedule;
             }
 
             // (9.e) Check R_mcc of chain
             if (chain.size() == maxTasksInSubCircle_) {
-                schedule.push_back(std::make_pair(chainStart,
+                finalSchedule.push_back(std::make_pair(chainStart,
                                                   chain));
-                // goto 2
+                break; // goto 2 -> form new chain
             } else {
-                // goto 4
+                continue;// goto 4 -> continue form current chain
             }
 
         }
 
-
     }
 
-    if (!result)
-        finalSchedule.clear();
-
-    return finalSchedule;
 }
 
 

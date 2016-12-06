@@ -49,12 +49,12 @@ bool TaskReader::readTasks() {
             return false;
         }
 
-        std::cout << taskId << " " <<
-                transData << " " <<
-                frequency << " " <<
-                leftBorder << " " <<
-                rightBorder << " " <<
-                std::endl;
+//        std::cout << taskId << " " <<
+//                transData << " " <<
+//                frequency << " " <<
+//                leftBorder << " " <<
+//                rightBorder << " " <<
+//                std::endl;
 
         Task* task = new Task(taskId, transData, frequency,
                               leftBorder, rightBorder);

@@ -97,6 +97,46 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
     return false;
 }
 
+
+void printSchedule(Schedule schedule) {
+    std::cout << "SCHEDULE:" << std::endl;
+    for (unsigned int i=0; i<schedule.size(); i++) {
+        unsigned int chainStart = std::get<0>(schedule[i]);
+        Tasks chain = std::get<1>(schedule[i]);
+        std::cout << chainStart << ' ';
+
+        for (unsigned int j=0; i<chain.size(); j++) {
+            std::cout << chain[j]->getId() << ' ';
+        }
+        std::cout << std::endl;
+    }
+}
+
+
+bool testAlgorithm(TaskContainer* taskContainer,
+                  Algorithm& algorithm)
+{
+    Schedule schedule;
+    double reserve = getReservePrecision();
+    unsigned int maxTasksInSubCircle = taskContainer->getMaxTasksInSubCircle();
+    algorithm.setReserve(reserve);
+    algorithm.setMaxTasksInSubCircle(maxTasksInSubCircle);
+
+    std::cout << "Reserve-> " << reserve <<
+            "; Max tasks in subcircle-> " <<
+            maxTasksInSubCircle <<
+            std::endl;
+
+    schedule = algorithm.schedule(taskContainer);
+    if (!schedule.empty()) {
+        printSchedule(schedule);
+        return true;
+    }
+
+    return false;
+}
+
+
 int main(int argc, char* argv[]) {
     if (argc != 3) {
 
@@ -128,14 +168,22 @@ int main(int argc, char* argv[]) {
 
     algorithm.printParameters();
 
-    std::cout << "Tasks in TaskContainer"<< std::endl;
-    taskContainer->printTasks();
+//    std::cout << "Tasks in TaskContainer"<< std::endl;
+//    taskContainer->printTasks();
 
 
-    return 0;
+//    if (!testAlgorithm(taskContainer, algorithm)) {
+//        std::cout << "Schedule was not created" << std::endl;
+//        return 1;
+//    }
+//
+//
+//    return 0;
 
-    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) 
+    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) {
+        std::cout << "Schedule was not created" << std::endl;
         return 1;
-    
+    }
+
     return 0;
 }

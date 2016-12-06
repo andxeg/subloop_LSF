@@ -99,7 +99,7 @@ bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
 }
 
 
-unsigned int getStock() {
+unsigned int Task::getStock() {
     return (rightBorder_ - leftBorder_) - duration_;
 }
 
