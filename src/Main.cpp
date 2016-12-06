@@ -7,8 +7,11 @@
 
 
 unsigned int readSubCircleTime(const char* str) {
+    // Subcircle time is given in milliseconds
+    // Convert it to microseconds
     std::string subCircleTimeStr(str);
     unsigned int subCircleTime = std::stoi(subCircleTimeStr);
+    subCircleTime *= 1000;
     return subCircleTime;
 }
 
@@ -122,10 +125,19 @@ bool testAlgorithm(TaskContainer* taskContainer,
     algorithm.setReserve(reserve);
     algorithm.setMaxTasksInSubCircle(maxTasksInSubCircle);
 
-    std::cout << "Reserve-> " << reserve <<
-            "; Max tasks in subcircle-> " <<
-            maxTasksInSubCircle <<
-            std::endl;
+    //
+    reserve = 0.27;
+    maxTasksInSubCircle = 7;
+    algorithm.setReserve(reserve);
+    algorithm.setSubCircleTime(5*1000);
+    algorithm.setMaxTasksInSubCircle(maxTasksInSubCircle);
+    algorithm.printParameters();
+    //
+
+//    std::cout << "Reserve-> " << reserve <<
+//            "; Max tasks in subcircle-> " <<
+//            maxTasksInSubCircle <<
+//            std::endl;
 
     schedule = algorithm.schedule(taskContainer);
     if (!schedule.empty()) {
@@ -166,24 +178,24 @@ int main(int argc, char* argv[]) {
     algorithm.setSubCircleTime(subCircleTime);
 
 
-    algorithm.printParameters();
+//    algorithm.printParameters();
 
 //    std::cout << "Tasks in TaskContainer"<< std::endl;
 //    taskContainer->printTasks();
 
-
-//    if (!testAlgorithm(taskContainer, algorithm)) {
-//        std::cout << "Schedule was not created" << std::endl;
-//        return 1;
-//    }
+//
+    if (!testAlgorithm(taskContainer, algorithm)) {
+        std::cout << "Schedule was not created" << std::endl;
+        return 1;
+    }
 //
 //
 //    return 0;
 
-    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) {
-        std::cout << "Schedule was not created" << std::endl;
-        return 1;
-    }
+//    if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) {
+//        std::cout << "Schedule was not created" << std::endl;
+//        return 1;
+//    }
 
     return 0;
 }
