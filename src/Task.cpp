@@ -31,7 +31,7 @@ bool Task::isWillBeOnTime(const unsigned int& currentTime) { // !!!!!!!!!!!!!
     bool result = true;
     unsigned int currPeriod = (currentTime/period_)*period_;
 
-    // Task has already been executed
+    // Task has already been executed in current period
     if (lastExecutionTime_  > currPeriod)
         return true;
 

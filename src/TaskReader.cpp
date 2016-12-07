@@ -20,7 +20,7 @@ bool TaskReader::readTasks() {
     inputFile.open(inputFileName_, std::ios::in);
 
     if (!inputFile.is_open()) {
-        std::cout << "Error while opening file: " <<
+        std::cerr << "Error while opening file: " <<
                 inputFileName_ <<
                 std::endl;
         return false;
@@ -44,7 +44,7 @@ bool TaskReader::readTasks() {
                 leftBorder >>
                 rightBorder))
         {
-            std::cout << "Error while reading input file" << std::endl;
+            std::cerr << "Error while reading input file" << std::endl;
             inputFile.close();
             return false;
         }

@@ -16,6 +16,8 @@ public:
 	unsigned int getMaxTresholdTasksInSubCircle(const unsigned int& subCircleTime, double& reserve);
     unsigned int getMinTresholdTasksInSubCircle(const unsigned int& subCircleTime);
 
+	unsigned int getOverallTasksCount();
+
     void setTasks(Tasks& tasks);
     Tasks getTasks();
 

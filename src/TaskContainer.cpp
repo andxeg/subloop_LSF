@@ -1,6 +1,10 @@
 #include "TaskContainer.h"
 
 #include <algorithm>
+#include <cmath>
+
+
+#define MIN(a,b) (((a)>(b))?(b):(a))
 
 
 TaskContainer::TaskContainer() {
@@ -45,7 +49,9 @@ unsigned int TaskContainer::getMaxTasksInSubCircle() {
     		minDuration = duration;
     }
 
-    return getRunTime() / minDuration;
+    // TODO change to MAX. If runTime == subCircle then
+    // in one subCircle will be executed all tasks
+    return MIN(getRunTime() / minDuration, tasks_.size());
 
 }
 
@@ -58,7 +64,6 @@ bool TaskContainer::taskCompare(Task* first, Task* second) {
 void TaskContainer::setTasks(Tasks& tasks) {
     tasks_ = tasks;
     std::sort(tasks_.begin(), tasks_.end(), TaskContainer::taskCompare);
-
 }
 
 
@@ -114,7 +119,7 @@ void TaskContainer::printTasks() {
 unsigned int TaskContainer::getMaxTresholdTasksInSubCircle(const unsigned int& subCircleTime,
                                                            double& reserve)
 {
-    unsigned int realSubCircleTime = subCircleTime*(1-reserve);
+    unsigned int realSubCircleTime = static_cast<double>(subCircleTime)*(1-reserve);
     unsigned int currentSubCircleTime = 0;
     unsigned maxCountInSubCircle = 0;
 
@@ -131,12 +136,26 @@ unsigned int TaskContainer::getMaxTresholdTasksInSubCircle(const unsigned int& s
 
 unsigned int TaskContainer::getMinTresholdTasksInSubCircle(const unsigned int& subCircleTime) {
     unsigned int runTime = getRunTime();
-    unsigned int chainMaxCount = runTime/ subCircleTime + 1;
+    // Nearest integral value that is not less runTime/ subCircleTime
+    unsigned int chainMaxCount = static_cast<unsigned int>(
+            std::ceil(static_cast<double>(runTime)/subCircleTime));
     unsigned allTasksCount = 0;
 
     for (unsigned int i=0; i<tasks_.size(); i++) {
-        allTasksCount += ((runTime/tasks_[i]->getPeriod()) + 1);
+        allTasksCount += static_cast<unsigned int>(std::ceil(static_cast<double>(runTime)/tasks_[i]->getPeriod()));
     }
 
-    return allTasksCount/chainMaxCount + 1;
+    return static_cast<unsigned int>(std::ceil(static_cast<double>(allTasksCount)/chainMaxCount));
+}
+
+
+unsigned int TaskContainer::getOverallTasksCount() {
+    unsigned int runTime = getRunTime();
+    unsigned int allTasksCount = 0;
+
+    for (unsigned int i=0; i<tasks_.size(); i++) {
+        allTasksCount += static_cast<unsigned int>(std::ceil(static_cast<double>(runTime)/tasks_[i]->getPeriod()));
+    }
+
+    return allTasksCount;
 }

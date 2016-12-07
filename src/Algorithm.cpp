@@ -137,7 +137,7 @@ Task* Algorithm::getTaskByLsfCriteria(Tasks& tasks, unsigned int& currentTime) {
 
 
 bool Algorithm::existNotFinishedBeforeRunTime(Tasks& tasks,
-                                             unsigned int& currentTime)
+                                              unsigned int& currentTime)
 {
     bool result = false;
     for (unsigned int i=1; i < tasks.size(); i++) {
@@ -173,16 +173,16 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
         Tasks chain;
         unsigned int chainDuration = 0;
 
-
-        chainStart = currentTime;
-        std::cout << "Chain start -> " << chainStart << std::endl;
         // NOW we at the START of the CHAIN
+        chainStart = currentTime;
+//        std::cout << "Chain start -> " << chainStart << std::endl;
+
 
         //(4) Check if schedule interval is exhausted.
         if (currentTime >= runTime_) {
             if (existPassedTasks(tasks, runTime_)) {
-                std::cout << "Schedule time was exhausted, but some tasks were passed" << std::endl;
-                printSchedule(finalSchedule);
+                std::cerr << "Schedule time was exhausted, but some tasks were passed" << std::endl;
+//                printSchedule(finalSchedule);
                 finalSchedule.clear();
                 return finalSchedule;
             }
@@ -190,8 +190,8 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
                 if (checkAllTasksFinishedToCurrentTimeInPeriod(tasks, runTime_))
                     return finalSchedule;
                 else {
-                    std::cout << "Schedule time was exhausted, but some didn't finished" << std::endl;
-                    printSchedule(finalSchedule);
+                    std::cerr << "Schedule time was exhausted, but some didn't finished" << std::endl;
+//                    printSchedule(finalSchedule);
                     finalSchedule.clear();
                     return finalSchedule;
                 }
@@ -204,8 +204,8 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             //(4.5) Check if tasks is passed after shift.
             // in shift time may be tasks must have been executed but wasn't executed
             if (existPassedTasks(tasks, currentTime)) {
-                std::cout << "Chain. existPassedTasks. In start while." << std::endl; // !!!!!!!!!
-                printSchedule(finalSchedule);
+                std::cerr << "Chain. existPassedTasks. In start while." << std::endl; // !!!!!!!!!
+//                printSchedule(finalSchedule);
                 finalSchedule.clear();
                 return finalSchedule;
             }
@@ -213,8 +213,8 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             //(5,6,7) All task could be potential executed on time
             // Check it!
             if (existImpossibleTasks(tasks, currentTime)) {
-                std::cout << "Chain. existImpossibleTasks." << std::endl; // !!!!!!!!!!
-                printSchedule(finalSchedule);
+                std::cerr << "Chain. existImpossibleTasks." << std::endl; // !!!!!!!!!!
+//                printSchedule(finalSchedule);
                 finalSchedule.clear();
                 return finalSchedule;
             }
@@ -228,9 +228,11 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             if (readyTasks.empty()) {
                 if (!chain.empty()) {
                     finalSchedule.push_back(std::make_pair(chainStart,
-                                                      chain));
+                                                           chain));
                     break;// jump to 2 -> form new chain
                 } else {
+                    finalSchedule.push_back(std::make_pair(chainStart,
+                                                           chain));
                     break;// jump to 3 -> form new chain
                 }
             }
@@ -241,8 +243,8 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             // in case when runTime is exhausted in the middle of subCircle
             bool flag = existNotFinishedBeforeRunTime(readyTasks, currentTime);
             if (flag) {
-                std::cout << "Chain. existNotFinishedBeforeRunTime." << std::endl;
-                printSchedule(finalSchedule);
+                std::cerr << "Chain. existNotFinishedBeforeRunTime." << std::endl;
+//                printSchedule(finalSchedule);
                 finalSchedule.clear();
                 return finalSchedule;
             }
@@ -255,8 +257,8 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
 
             if (tasksCanFinishedWithReserveLimitation.empty()) {
                 if (chain.empty()) {
-                    std::cout << "Chain. tasksCanFinishedWithReserveLimitation.empty()." << std::endl; //!!!
-                    printSchedule(finalSchedule);
+                    std::cerr << "Chain. tasksCanFinishedWithReserveLimitation.empty()." << std::endl; //!!!
+//                    printSchedule(finalSchedule);
                     finalSchedule.clear();
                     return finalSchedule;
                 } else {
@@ -287,7 +289,7 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
 
 //            // Check if task passed when current task was processing
 //            if (existPassedTasks(tasks, currentTime)) {
-//                std::cout << "Chain. existPassedTasks. During task was processing" << std::endl; //!!!
+//                std::cerr << "Chain. existPassedTasks. During task was processing" << std::endl; //!!!
 //                printSchedule(finalSchedule);
 //                finalSchedule.clear();
 //                return finalSchedule;
@@ -301,7 +303,7 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
 
 //                // Check if task passed when current task was processing
 //                if (existPassedTasks(tasks, currentTime)) {
-//                    std::cout << "Chain. Chain size was exhausted." << std::endl;
+//                    std::cerr << "Chain. Chain size was exhausted." << std::endl;
 //                    printSchedule(finalSchedule);
 //                    finalSchedule.clear();
 //                    return finalSchedule;
@@ -313,6 +315,7 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
             }
 
         }
+
 
         //(3) Shift to start time chain.
         unsigned int shiftFromStartTimeChain = currentTime%subCircleTime_;
