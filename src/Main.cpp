@@ -81,7 +81,7 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
 
         for (;tasksInSubCircle<=maxTasksInSubCircle; tasksInSubCircle++) {
             algorithm.setMaxTasksInSubCircle(tasksInSubCircle);
-            schedule = algorithm.schedule(taskContainer);
+            schedule = algorithm.scheduleNew(taskContainer);
             if (!schedule.empty()) {
                 std::cout << "SCHEDULE WAS FOUND" << std::endl;
                 std::cout << "Reserve-> " << reserve << "; Min tasks in subcircle-> " <<
@@ -126,11 +126,6 @@ int main(int argc, char* argv[]) {
     algorithm.setRunTime(runTime);
     algorithm.setSubCircleTime(subCircleTime);
 
-
-    algorithm.printParameters();
-    taskContainer->printTasks();
-
-    return 0;
 
     if (!findMaxReserveAndMinTasksThresholdInSubCircle(taskContainer, algorithm)) {
         std::cerr << "Schedule was not created" << std::endl;

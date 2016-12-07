@@ -8,6 +8,7 @@ Algorithm::Algorithm() {
     subCircleTime_ = 0;
 }
 
+
 Algorithm::~Algorithm() {}
 
 
@@ -19,6 +20,7 @@ void Algorithm::printParameters() {
             "Subcircle duration-> " << subCircleTime_ << std::endl <<
             std::endl;
 }
+
 
 void Algorithm::setReserve(const double& reserve) {
     reserve_ = reserve;
@@ -107,6 +109,7 @@ Tasks Algorithm::getReadyTasks(Tasks& tasks, unsigned int& currentTime) {
     return readyTasks;
 }
 
+
 Tasks Algorithm::getTasksCanFinishedWithReserveLimitation(Tasks& tasks,
                                                           unsigned int& chainDuration)
 {
@@ -140,8 +143,8 @@ bool Algorithm::existNotFinishedBeforeRunTime(Tasks& tasks,
                                               unsigned int& currentTime)
 {
     bool result = false;
-    for (unsigned int i=1; i < tasks.size(); i++) {
-        if ((currentTime+tasks[i]->getDuration()) > runTime_) {
+    for (unsigned int i=0; i < tasks.size(); i++) {
+        if (!tasks[i]->isWillBeOnTimeWithNewRightBorder(currentTime, runTime_)) {
             result = true;
             break;
         }
@@ -149,11 +152,6 @@ bool Algorithm::existNotFinishedBeforeRunTime(Tasks& tasks,
 
     return result;
 }
-
-
-//typedef std::vector<Task*> Tasks;
-//
-//typedef std::vector< std::pair < unsigned int, Tasks>> Schedule;
 
 
 Schedule Algorithm::schedule(TaskContainer* taskContainer) {
@@ -328,26 +326,150 @@ Schedule Algorithm::schedule(TaskContainer* taskContainer) {
 
 void Algorithm::printSchedule(Schedule& schedule) {
     std::cout << "SCHEDULE:" << std::endl;
-
     if (schedule.empty()) {
         std::cout << "Schedule is empty" << std::endl;
         return;
     }
 
-//    std::cout <<  "Schedule.size() -> " << schedule.size() << std::endl;
-
     for (unsigned int i=0; i<schedule.size(); i++) {
         unsigned int chainStart = std::get<0>(schedule[i]);
-//        std::cout << "Chain start -> " << chainStart << std::endl;
         Tasks chain = std::get<1>(schedule[i]);
-//        std::cout << "Chain was read. Chain size-> " << chain.size() << std::endl;
         std::cout << chainStart << ' ';
-
         for (unsigned int j=0; j<chain.size(); j++) {
             std::cout << chain[j]->getId() << ' ';
         }
         std::cout << std::endl;
     }
 }
+
+
+//========================NEW_SCHEDULE=========================
+
+Schedule Algorithm::scheduleNew(TaskContainer* taskContainer) {
+    Schedule schedule;
+    Tasks tasks = taskContainer->getTasks();
+
+    for (unsigned int currentTime=0; currentTime<runTime_;) {
+        // Create new chain
+        Tasks chain;
+        unsigned int chainStart=currentTime;
+        unsigned int chainDuration = 0;
+
+        std::cout << chainStart << std::endl;
+
+        // Form chain
+        for (;chain.size() < maxTasksInSubCircle_;) {
+
+            // I Check existPassedTask
+            if (existPassedTasks(tasks, currentTime)) {
+                std::cout << "Chain.existPassedTasks"<< std::endl;
+                printSchedule(schedule);
+                schedule.clear();
+                return schedule;
+            }
+
+
+            // II Check existImpossibleTasks - tasks which
+            // cannot finish on time by the end of their
+            // directive interval
+            if (existImpossibleTasks(tasks, currentTime)) {
+                std::cout << "Chain.existImpossibleTasks"<< std::endl;
+                printSchedule(schedule);
+                schedule.clear();
+                return schedule;
+            }
+
+
+            // III Check if runTime is exhausted in the middle of
+            // the subcircle. If that then check if all tasks
+            // can finish on time by the end of runTime
+            if (existNotFinishedBeforeRunTime(tasks, currentTime)) {
+                std::cout << "Chain.existNotFinishedBeforeRunTime"<< std::endl;
+                printSchedule(schedule);
+                schedule.clear();
+                return schedule;
+            }
+
+
+            // IV getReadyTasks
+            // tasks which still not start but must start
+            // if empty -> break - goto form a new chain
+            Tasks readyTasks = getReadyTasks(tasks, currentTime);
+            if (readyTasks.empty())
+                break;
+
+
+            // V get tasks which can finish with
+            // reserve limitation
+            // if empty and chain.empty ->
+            // - > schedule.clear()
+            //     return schedule
+            // if empty and !chain.empty ->
+            // -> break - goto form a new chain;
+            // if not empty go further
+            Tasks accessLimit = getTasksCanFinishedWithReserveLimitation(readyTasks,
+                                                                         chainDuration);
+
+            if (accessLimit.empty()) {
+                if (chain.empty()) {
+                    std::cout << "Chain. getTasksCanFinishedWithReserveLimitation is empty "
+                                         "and chain is empty" << std::endl;
+                    printSchedule(schedule);
+                    schedule.clear();
+                    return schedule;
+                } else {
+                    break;
+                }
+            }
+
+
+            // VI from this tasks get TASK by criteria
+            Task* task = getTaskByLsfCriteria(accessLimit, currentTime);
+
+
+            // VII put this task to chain
+            chain.push_back(task);
+
+
+            // VIII change currentTime, chainDuration
+            currentTime += task->getDuration();
+            chainDuration += task->getDuration();
+
+            //IX set lastExecutionTime
+            task->setLastExecutionTime(currentTime);
+        }
+
+        // add or not chain to schedule
+        schedule.push_back(std::make_pair(chainStart, chain));
+
+        // Shift time to start chain time
+        unsigned int shiftChainStartTime = currentTime%subCircleTime_;
+        currentTime += subCircleTime_ - shiftChainStartTime;
+    }
+
+
+    // Check schedule correctness
+    std::cout << "Check schedule correctness" << std::endl;
+
+    // Check if not existPassedTasks
+    if (existPassedTasks(tasks, runTime_)) {
+        std::cout << "existPassedTasks"<< std::endl;
+        printSchedule(schedule);
+        schedule.clear();
+        return schedule;
+    }
+
+    // Check that all Tasks were finished by the runTime
+    if (!checkAllTasksFinishedToCurrentTimeInPeriod(tasks, runTime_)) {
+        std::cout << "checkAllTasksFinishedToCurrentTimeInPeriod - FALSE"<< std::endl;
+        printSchedule(schedule);
+        schedule.clear();
+        return schedule;
+    }
+
+    return schedule;
+}
+
+
 
 

@@ -22,5 +22,5 @@ clean_objective:
 	rm ./Main.o ./TaskReader.o ./Algorithm.o ./Task.o ./TaskContainer.o
 
 clean:
-	rm ./prog_02160560_521
+	rm ./prog_02160560_521 ./Main.o ./TaskReader.o ./Algorithm.o ./Task.o ./TaskContainer.o
 

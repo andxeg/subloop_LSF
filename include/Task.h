@@ -13,6 +13,8 @@ public:
 
     // Can task will be executed on time
     bool isWillBeOnTime(const unsigned int& currentTime);
+    bool isWillBeOnTimeWithNewRightBorder(const unsigned int& currentTime,
+                                          const unsigned int& rightBorder);
 
     // Can do task be executed now.
     // Check one execution on period.
