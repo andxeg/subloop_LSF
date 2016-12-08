@@ -19,6 +19,13 @@ TaskContainer::~TaskContainer() {
 }
 
 
+
+void TaskContainer::setTasksInStartCondition() {
+    for (unsigned int i=0; i<tasks_.size(); i++)
+        tasks_[i]->setLastExecutionTime(0);
+}
+
+
 unsigned long long TaskContainer::getRunTime() {
     // find schedule interval as lcm of the tasks period
 	unsigned int taskCount = tasks_.size();

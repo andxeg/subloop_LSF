@@ -20,7 +20,8 @@ Task::Task(const unsigned int& taskId,
     period_ = static_cast<unsigned int>(1000000.0/frequency);
     leftBorder_ = leftBorder*1000;
     rightBorder_ = rightBorder==0 ? period_ : rightBorder*1000;
-    lastExecutionTime_ = -period_;
+//    lastExecutionTime_ = -period_;
+    lastExecutionTime_ = 0;
 }
 
 
@@ -141,14 +142,17 @@ bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) { //
     bool result = false;
     unsigned int startOfPeriod = (currentTime/period_)*period_;
 
+    if (currentTime == 0)
+        return false;
 
     if (currentTime == startOfPeriod) {
         if (lastExecutionTime_ <= startOfPeriod - period_ + rightBorder_ &&
             lastExecutionTime_ > (startOfPeriod - period_ + leftBorder_))
             return true;
     } else {
-        if (lastExecutionTime_ > startOfPeriod- period_ + leftBorder_ &&
-                lastExecutionTime_ <= currentTime)
+        // if (lastExecutionTime_ > startOfPeriod- period_ + leftBorder_ &&
+        //         lastExecutionTime_ <= currentTime)
+        if (lastExecutionTime_ > startOfPeriod)
             result = true;
     }
 

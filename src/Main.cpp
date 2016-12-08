@@ -4,6 +4,7 @@
 #include "Defs.h"
 #include "TaskReader.h"
 #include "Algorithm.h"
+#include <iomanip>
 
 
 unsigned int readSubCircleTime(const char* str) {
@@ -16,8 +17,8 @@ unsigned int readSubCircleTime(const char* str) {
 }
 
 
-inline double getReservePrecision() {
-    return 0.01;
+inline unsigned int getReservePrecision() {
+    return 1;
 }
 
 
@@ -63,38 +64,40 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
 {
     Schedule schedule;
 
-    double reserve=1.0-getReservePrecision();
-    unsigned int maxTasksInSubCircle = taskContainer->getMaxTasksInSubCircle();
+    int reserveProc=100-getReservePrecision();
+    int minReserveProc = 0;
+//    unsigned int maxTasksInSubCircle = taskContainer->getMaxTasksInSubCircle();
 
-//    unsigned int minThreshold = taskContainer->getMinTresholdTasksInSubCircle(algorithm.getSubCircleTime());
-    unsigned int minThreshold = 1;
+    unsigned int minThreshold = taskContainer->getMinTresholdTasksInSubCircle(algorithm.getSubCircleTime());
+    unsigned int maxTasksInSubCircle;
 
-    for (;reserve>=0.0; reserve-=getReservePrecision()) {
+    for (;reserveProc>=minReserveProc; reserveProc-=getReservePrecision()) {
+        double reserve = static_cast<double>(reserveProc/100.0);
         algorithm.setReserve(reserve);
         unsigned int tasksInSubCircle = minThreshold;
-//        maxTasksInSubCircle = taskContainer->getMaxTresholdTasksInSubCircle(algorithm.getSubCircleTime(), reserve);
-        std::cout << "tasksInSubCircle -> " <<
-                tasksInSubCircle << ' ' <<
-                "maxTasksInSubCircle -> " <<
-                maxTasksInSubCircle <<
-                std::endl;
+        maxTasksInSubCircle = taskContainer->getMaxTresholdTasksInSubCircle(algorithm.getSubCircleTime(), reserve);
 
         for (;tasksInSubCircle<=maxTasksInSubCircle; tasksInSubCircle++) {
             algorithm.setMaxTasksInSubCircle(tasksInSubCircle);
+            taskContainer->setTasksInStartCondition();
             schedule = algorithm.scheduleNew(taskContainer);
             if (!schedule.empty()) {
                 std::cout << "SCHEDULE WAS FOUND" << std::endl;
-                std::cout << "Reserve-> " << reserve << "; Min tasks in subcircle-> " <<
-                        tasksInSubCircle << std::endl;
+//                std::cout << "Reserve-> " << reserve << "; Min tasks in subcircle-> " <<
+//                        tasksInSubCircle << std::endl;
+                algorithm.printParameters();
 
-                // print Schedule
                 printSchedule(schedule);
-                if (verifySchedule(schedule, taskContainer))
+                if (verifySchedule(schedule, taskContainer)) {
                     std::cout << "Schedule is correct" << std::endl;
-                else
+                    return true;
+                } else {
                     std::cout << "Schedule is NOT correct" << std::endl;
-                return true;
+                    return false;
+                }
+
             }
+
         }
         
     }

@@ -10,6 +10,8 @@ public:
     TaskContainer();
     ~TaskContainer();
 
+	void setTasksInStartCondition();
+
     unsigned long long getRunTime();
     unsigned int getMaxTasksInSubCircle();
 
