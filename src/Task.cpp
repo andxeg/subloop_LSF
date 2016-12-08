@@ -1,6 +1,5 @@
 #include "Task.h"
 
-
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 
@@ -20,7 +19,6 @@ Task::Task(const unsigned int& taskId,
     period_ = static_cast<unsigned int>(1000000.0/frequency);
     leftBorder_ = leftBorder*1000;
     rightBorder_ = rightBorder==0 ? period_ : rightBorder*1000;
-//    lastExecutionTime_ = -period_;
     lastExecutionTime_ = 0;
 }
 
@@ -28,7 +26,7 @@ Task::Task(const unsigned int& taskId,
 Task::~Task() {}
 
 
-bool Task::isWillBeOnTime(const unsigned int& currentTime) { // was modified!!!!
+bool Task::isWillBeOnTime(const unsigned int& currentTime) {
     bool result = true;
     unsigned int currPeriod = (currentTime/period_)*period_;
 
@@ -53,7 +51,7 @@ bool Task::isWillBeOnTime(const unsigned int& currentTime) { // was modified!!!!
 }
 
 bool Task::isWillBeOnTimeWithNewRightBorder(const unsigned int& currentTime,
-                                            const unsigned int& rightBorder) // was added!!!!
+                                            const unsigned int& rightBorder)
 {
     bool result = true;
     unsigned int currPeriod = (currentTime/period_)*period_;
@@ -80,7 +78,7 @@ bool Task::isWillBeOnTimeWithNewRightBorder(const unsigned int& currentTime,
 
 
 
-bool Task::isReady(const unsigned int& currentTime) { // was modified!!!!
+bool Task::isReady(const unsigned int& currentTime) {
     bool result = false;
     unsigned int currPeriod = (currentTime/period_)*period_;
 
@@ -103,7 +101,7 @@ bool Task::isReady(const unsigned int& currentTime) { // was modified!!!!
 }
 
 
-bool Task::isPassed(const unsigned int& currentTime) { // was modified!!!!
+bool Task::isPassed(const unsigned int& currentTime) {
     bool result = false;
 
     if (lastExecutionTime_%period_ == 0) {
@@ -133,12 +131,9 @@ bool Task::isExecutedInCurrentPeriod(const unsigned int& currentTime) {
 }
 
 // two variant when task finish
-// when last exec in current period and period didn't finished
-// when period just finished and last exec <= this time
-
-// return false when last exec was in previous period
-// current period didn't finished and > startOfPeriod
-bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) { // was modified!!!!
+// 1) when last exec in current period and period didn't finished
+// 2) when period just finished and last exec <= this time
+bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) {
     bool result = false;
     unsigned int startOfPeriod = (currentTime/period_)*period_;
 
@@ -160,7 +155,7 @@ bool Task::isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime) { //
 }
 
 
-unsigned int Task::getStock(const unsigned int& currentTime) { // was modified!!!!
+unsigned int Task::getStock(const unsigned int& currentTime) {
     // phi2 - phi1* - duration
     // phi1* = max(phi1, currentTime)
 
@@ -209,6 +204,7 @@ unsigned int Task::getRightBorder() {
 unsigned int Task::getLastExecutionTime() {
     return lastExecutionTime_;
 }
+
 
 void Task::setLastExecutionTime(const unsigned int& lastExecutionTime ) {
     lastExecutionTime_ = lastExecutionTime;

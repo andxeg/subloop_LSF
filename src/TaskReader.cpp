@@ -15,6 +15,7 @@ TaskReader::~TaskReader() {
     delete taskContainer_;
 }
 
+
 bool TaskReader::readTasks() {
     std::fstream inputFile;
     inputFile.open(inputFileName_, std::ios::in);
@@ -49,13 +50,6 @@ bool TaskReader::readTasks() {
             return false;
         }
 
-//        std::cout << taskId << " " <<
-//                transData << " " <<
-//                frequency << " " <<
-//                leftBorder << " " <<
-//                rightBorder << " " <<
-//                std::endl;
-
         Task* task = new Task(taskId, transData, frequency,
                               leftBorder, rightBorder);
         tasks.push_back(task);
@@ -76,4 +70,3 @@ TaskContainer* TaskReader::getTaskContainer() {
 //0       20      1       0       0
 //             ...
 //# There must be NO newline at the end of this file
-

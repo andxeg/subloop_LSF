@@ -17,7 +17,10 @@ public:
     void setSubCircleTime(const unsigned& subCircleTime);
     unsigned int getSubCircleTime();
 
+    // algo with while-while in bad style
     Schedule schedule(TaskContainer* taskContainer);
+
+    // See it! algo with for-for in acceptable view
     Schedule scheduleNew(TaskContainer* taskContainer);
 
 private:

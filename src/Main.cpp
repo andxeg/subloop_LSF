@@ -42,18 +42,15 @@ void printSchedule(Schedule& schedule) {
 
 
 bool verifySchedule(Schedule& schedule, TaskContainer* taskContainer) {
+    // simple verification
+    // check that all tasks were executed
     unsigned int tasksInSchedule = 0;
     unsigned int overallTasksCount = taskContainer->getOverallTasksCount();
-
-
 
     for (unsigned int i=0; i<schedule.size(); i++) {
         Tasks chain = std::get<1>(schedule[i]);
         tasksInSchedule += chain.size();
     }
-
-    std::cout << "Overall tasks count -> " << overallTasksCount << std::endl;
-    std::cout << "Tasks in schedule  -> " << tasksInSchedule << std::endl;
 
     return tasksInSchedule == overallTasksCount;
 }
@@ -83,10 +80,7 @@ bool findMaxReserveAndMinTasksThresholdInSubCircle(TaskContainer* taskContainer,
             schedule = algorithm.scheduleNew(taskContainer);
             if (!schedule.empty()) {
                 std::cout << "SCHEDULE WAS FOUND" << std::endl;
-//                std::cout << "Reserve-> " << reserve << "; Min tasks in subcircle-> " <<
-//                        tasksInSubCircle << std::endl;
                 algorithm.printParameters();
-
                 printSchedule(schedule);
                 if (verifySchedule(schedule, taskContainer)) {
                     std::cout << "Schedule is correct" << std::endl;

@@ -5,6 +5,7 @@
 
 
 #define MIN(a,b) (((a)>(b))?(b):(a))
+#define MAX(a,b) (((a)>(b))?(a):(b))
 
 
 TaskContainer::TaskContainer() {
@@ -17,7 +18,6 @@ TaskContainer::~TaskContainer() {
     for (unsigned int i=0; i<tasks_.size(); i++)
         delete tasks_[i];
 }
-
 
 
 void TaskContainer::setTasksInStartCondition() {
@@ -56,10 +56,12 @@ unsigned int TaskContainer::getMaxTasksInSubCircle() {
     		minDuration = duration;
     }
 
-    // TODO change to MAX. If runTime == subCircle then
-    // in one subCircle will be executed all tasks
-    return MIN(getRunTime() / minDuration, tasks_.size());
 
+    // If runTime == subCircle then
+    // in one subCircle will be executed all tasks
+
+//    return MAX(getRunTime() / minDuration, tasks_.size());
+    return getOverallTasksCount();
 }
 
 
@@ -120,7 +122,6 @@ void TaskContainer::printTasks() {
                 std::endl;
     }
 }
-
 
 
 unsigned int TaskContainer::getMaxTresholdTasksInSubCircle(const unsigned int& subCircleTime,

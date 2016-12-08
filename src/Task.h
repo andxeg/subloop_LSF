@@ -13,25 +13,31 @@ public:
 
     // Can task will be executed on time
     bool isWillBeOnTime(const unsigned int& currentTime);
+
+    // Can task will be executed on time with new rightBorder
     bool isWillBeOnTimeWithNewRightBorder(const unsigned int& currentTime,
                                           const unsigned int& rightBorder);
 
-    // Can do task be executed now.
+    // Can task is executed now.
     // Check one execution on period.
-    // Check that current time in directive interval
+    // Check that current time enter in the directive interval
     bool isReady(const unsigned int& currentTime);
 
-    // passed forever
+    // Check task passed or not
     bool isPassed(const unsigned int& currentTime);
 
-    // only mean that task executed or not executed in current period
+    // Only mean that task executed or not executed in current period
     bool isExecutedInCurrentPeriod(const unsigned int& currentTime);
 
-    // current time is either in the middle of period or at the end of period
+    // Current time is either in the middle of period or at the end of period
+    // Check that task was finished
     bool isFinishedToCurrentTimeInPeriod(const unsigned int& currentTime);
 
-
+    // for Least Slack First criteria
+    // return slack
     unsigned int getStock(const unsigned int& currentTime);
+
+    //return directive interval
     unsigned int getDirectiveIntervalDuration();
 
     unsigned int getId();
@@ -39,8 +45,11 @@ public:
     unsigned int getPeriod();
     unsigned int getLeftBorder();
     unsigned int getRightBorder();
+
+    // get last end of execution
     unsigned int getLastExecutionTime();
 
+    // set last end of execution
     void setLastExecutionTime(const unsigned int& lastExecutionTime );
     
 private:
@@ -50,5 +59,6 @@ private:
     unsigned int leftBorder_, rightBorder_;
 
     // end of last execution time
+    // need to control skip of task
     unsigned int lastExecutionTime_;
 };
